@@ -31,6 +31,12 @@ jobs:
         run: |
           pip install ansible
 
+      - name: Debug - Check if secrets are available
+        run: |
+          echo "AWS_ACCESS_KEY_ID is set: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
+          echo "AWS_SECRET_ACCESS_KEY is set: ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
+          echo "AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
