@@ -15,16 +15,12 @@
   file:
     path: "{{ app_dir }}"
     state: directory
-    owner: nginx
-    group: nginx
     mode: '0755'
 
 - name: Copy React application source
   copy:
     src: "{{ web_source_dir }}/"
     dest: "{{ app_dir }}/"
-    owner: nginx
-    group: nginx
     mode: '0755'
 
 - name: Install npm dependencies (including dev for build)
@@ -38,7 +34,13 @@
     chdir: "{{ app_dir }}"
   environment:
     NODE_ENV: production
-    PATH: "{{ app_dir }}/node_modules/.bin:{{ ansible_facts.env.PATH }}"
+
+- name: Set ownership for built app
+  file:
+    path: "{{ app_dir }}"
+    owner: nginx
+    group: nginx
+    recurse: yes
 
 - name: Configure Nginx for React app
   template:
