@@ -31,16 +31,14 @@
   shell: npm install
   args:
     chdir: "{{ app_dir }}"
-    creates: "{{ app_dir }}/node_modules"
 
 - name: Build React application
   shell: npm run build
   args:
     chdir: "{{ app_dir }}"
-    creates: "{{ app_dir }}/dist"
   environment:
     NODE_ENV: production
-    PATH: "{{ app_dir }}/node_modules/.bin:{{ ansible_env.PATH }}"
+    PATH: "{{ app_dir }}/node_modules/.bin:{{ ansible_facts.env.PATH }}"
 
 - name: Configure Nginx for React app
   template:
