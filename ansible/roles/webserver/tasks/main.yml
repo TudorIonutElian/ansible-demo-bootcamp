@@ -20,19 +20,12 @@
     mode: '0755'
 
 - name: Copy React application source
-  synchronize:
+  copy:
     src: "../../web/"
     dest: "{{ app_dir }}/"
-    delete: yes
-    recursive: yes
-  delegate_to: localhost
-
-- name: Set ownership for application directory
-  file:
-    path: "{{ app_dir }}"
     owner: nginx
     group: nginx
-    recurse: yes
+    mode: '0755'
 
 - name: Install npm dependencies
   npm:
