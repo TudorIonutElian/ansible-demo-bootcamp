@@ -19,6 +19,10 @@ resource "aws_key_pair" "ssm_key" {
   public_key = tls_private_key.ssm_key_pair.public_key_openssh
 
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.ssm_key_pair.private_key_pem}' > ./ssm_key.pem"
+    command = <<-EOT
+      mkdir -p ~/.ssh
+      echo '${tls_private_key.ssm_key_pair.private_key_pem}' > ~/.ssh/ssm-key.pem
+      chmod 600 ~/.ssh/ssm-key.pem
+    EOT
   }
 }

@@ -22,22 +22,6 @@ resource "aws_iam_role_policy_attachment" "ec2_ssm_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy" "ec2_s3_artifacts" {
-  name = "ec2-s3-artifacts-read"
-  role = aws_iam_role.ec2_ssm_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = ["s3:GetObject"]
-        Resource = "${aws_s3_bucket.artifacts.arn}/*"
-      }
-    ]
-  })
-}
-
 resource "aws_iam_role_policy" "ec2_revoke_sg" {
   name = "ec2-revoke-sg-ingress"
   role = aws_iam_role.ec2_ssm_role.id

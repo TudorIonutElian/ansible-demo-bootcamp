@@ -1,24 +1,40 @@
 output "instance_ids" {
-  description = "IDs of the SSM demo EC2 instances"
-  value       = aws_instance.ssm_instances[*].id
+  description = "IDs of the web EC2 instances"
+  value       = aws_instance.web_instances[*].id
 }
 
 output "instance_public_ips" {
-  description = "Public IP addresses of the SSM demo EC2 instances"
-  value       = aws_instance.ssm_instances[*].public_ip
+  description = "Public IP addresses of the web EC2 instances"
+  value       = aws_instance.web_instances[*].public_ip
+}
+
+output "instance_private_ips" {
+  description = "Private IP addresses of the web EC2 instances"
+  value       = aws_instance.web_instances[*].private_ip
 }
 
 output "website_urls" {
-  description = "URLs to access the sample website on each instance"
-  value       = [for ip in aws_instance.ssm_instances[*].public_ip : "http://${ip}"]
-}
-
-output "artifact_bucket_name" {
-  description = "S3 bucket used for React build artifacts"
-  value       = aws_s3_bucket.artifacts.bucket
+  description = "URLs to access the React app on each instance"
+  value       = [for ip in aws_instance.web_instances[*].public_ip : "http://${ip}"]
 }
 
 output "security_group_id" {
   description = "ID of the web security group"
   value       = aws_security_group.ssm_web_sg.id
+}
+
+output "ssh_private_key_path" {
+  description = "Path to SSH private key for Ansible"
+  value       = "~/.ssh/ssm-key.pem"
+}
+
+output "ansible_inventory" {
+  description = "Ansible inventory in INI format"
+  value = <<-EOT
+[web_servers]
+${join("\n", [for idx, ip in aws_instance.web_instances[*].public_ip : "${ip} ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ssm-key.pem"])}
+
+[web_servers:vars]
+ansible_python_interpreter=/usr/bin/python3
+EOT
 }

@@ -1,0 +1,90 @@
+---
+- name: Install EPEL repository
+  dnf:
+    name:
+      - epel-release
+    state: present
+  ignore_errors: yes
+
+- name: Install Node.js and npm
+  block:
+    - name: Download Node.js setup script
+      get_url:
+        url: "https://rpm.nodesource.com/setup_{{ node_major_version }}.x"
+        dest: /tmp/nodesource_setup.sh
+        mode: '0755'
+
+    - name: Run Node.js setup script
+      shell: bash /tmp/nodesource_setup.sh
+      args:
+        creates: /etc/yum.repos.d/nodesource-el8.repo
+
+    - name: Install Node.js
+      dnf:
+        name: nodejs
+        state: present
+
+- name: Install Nginx
+  dnf:
+    name: nginx
+    state: present
+
+- name: Create application directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: '0755'
+
+- name: Copy React application source
+  synchronize:
+    src: "../../web/"
+    dest: "{{ app_dir }}/"
+    delete: yes
+    recursive: yes
+  delegate_to: localhost
+
+- name: Set ownership for application directory
+  file:
+    path: "{{ app_dir }}"
+    owner: nginx
+    group: nginx
+    recurse: yes
+
+- name: Install npm dependencies
+  npm:
+    path: "{{ app_dir }}"
+    state: present
+  environment:
+    NODE_ENV: production
+
+- name: Build React application
+  command: npm run build
+  args:
+    chdir: "{{ app_dir }}"
+  environment:
+    NODE_ENV: production
+
+- name: Configure Nginx for React app
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
+- name: Enable and start Nginx
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Open firewall for HTTP traffic
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+    immediate: yes
+  ignore_errors: yes

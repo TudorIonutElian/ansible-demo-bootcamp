@@ -1,15 +1,3 @@
-variable "ssm_instance_type" {
-  type        = string
-  default     = "t3.micro"
-  description = "SSM instance type (t3.micro is Free Tier eligible)"
-}
-
-variable "ssm_instance_count" {
-  type        = number
-  default     = 5
-  description = "SSM instance count"
-}
-
 variable "startsWith" {
   description = "The prefix of the AMI name"
   type        = string

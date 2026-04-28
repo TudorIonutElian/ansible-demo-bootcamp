@@ -1,0 +1,19 @@
+---
+- name: Deploy React Web Application
+  hosts: web_servers
+  become: yes
+  gather_facts: yes
+
+  vars:
+    app_name: react-web-app
+    app_dir: /opt/webapp
+    nginx_port: 80
+    node_major_version: 18
+
+  roles:
+    - webserver
+
+  post_tasks:
+    - name: Display deployment status
+      debug:
+        msg: "React app successfully deployed on {{ inventory_hostname }} at http://{{ ansible_default_ipv4.address }}"
