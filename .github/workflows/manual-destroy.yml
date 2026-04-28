@@ -52,13 +52,10 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
       - name: Terraform Init
-        run: |
-          cd terraform
-          terraform init
+        run: terraform init
 
       - name: Show what will be destroyed
         run: |
-          cd terraform
           echo "📋 The following resources will be DESTROYED:"
           terraform plan -destroy
 
@@ -73,20 +70,17 @@ jobs:
 
       - name: Terraform Destroy
         run: |
-          cd terraform
           echo "🔥 Destroying infrastructure..."
           terraform destroy -auto-approve
 
       - name: Verify destruction
         run: |
-          cd terraform
           echo "✅ Destruction complete. Verifying..."
           terraform show
 
       - name: Save destruction log
         if: always()
         run: |
-          cd terraform
           terraform show > destruction-log.txt || echo "No state remaining" > destruction-log.txt
           echo "Destroyed at: $(date)" >> destruction-log.txt
 
@@ -95,5 +89,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: destruction-log
-          path: terraform/destruction-log.txt
+          path: destruction-log.txt
           retention-days: 90

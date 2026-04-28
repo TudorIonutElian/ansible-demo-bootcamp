@@ -62,7 +62,7 @@ echo "  - IAM roles and instance profiles"
 echo "  - SSH key pair (saved to ~/.ssh/ssm-key.pem)"
 echo ""
 
-terraform apply
+terraform apply -auto-approve
 
 echo ""
 echo "✓ Infrastructure deployed successfully"
