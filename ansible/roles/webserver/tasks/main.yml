@@ -56,11 +56,3 @@
     name: nginx
     enabled: yes
     state: started
-
-- name: Open firewall for HTTP traffic
-  firewalld:
-    service: http
-    permanent: yes
-    state: enabled
-    immediate: yes
-  ignore_errors: yes
