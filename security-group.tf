@@ -5,12 +5,20 @@
 
 resource "aws_security_group" "ssm_web_sg" {
   name        = "ssm-web-sg"
-  description = "Allow HTTP inbound traffic for SSM demo website"
+  description = "Allow HTTP and SSH inbound traffic for SSM demo website"
 
   ingress {
     description = "HTTP"
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
