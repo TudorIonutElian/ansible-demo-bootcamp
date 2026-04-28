@@ -28,6 +28,12 @@ output "ssh_private_key_path" {
   value       = "~/.ssh/ssm-key.pem"
 }
 
+output "ssh_private_key" {
+  description = "SSH private key for Ansible connections"
+  value       = tls_private_key.ssm_key_pair.private_key_pem
+  sensitive   = true
+}
+
 output "ansible_inventory" {
   description = "Ansible inventory in INI format"
   value = <<-EOT

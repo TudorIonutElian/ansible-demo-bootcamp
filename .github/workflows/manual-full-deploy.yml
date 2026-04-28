@@ -57,6 +57,13 @@ jobs:
           TF_VAR_build_number: ${{ inputs.build_number }}
         run: terraform apply -auto-approve
 
+      - name: Extract SSH private key
+        run: |
+          mkdir -p ~/.ssh
+          terraform output -raw ssh_private_key > ~/.ssh/ssm-key.pem
+          chmod 600 ~/.ssh/ssm-key.pem
+          echo "✅ SSH key saved to ~/.ssh/ssm-key.pem"
+
       - name: Wait for instances to boot
         run: sleep 30
 
