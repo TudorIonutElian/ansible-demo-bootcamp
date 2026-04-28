@@ -9,6 +9,7 @@
     app_dir: /opt/webapp
     nginx_port: 80
     node_major_version: 18
+    web_source_dir: "{{ playbook_dir }}/../web"
 
   roles:
     - webserver

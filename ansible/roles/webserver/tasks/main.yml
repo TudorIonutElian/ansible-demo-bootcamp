@@ -21,7 +21,7 @@
 
 - name: Copy React application source
   copy:
-    src: "../../web/"
+    src: "{{ web_source_dir }}/"
     dest: "{{ app_dir }}/"
     owner: nginx
     group: nginx
