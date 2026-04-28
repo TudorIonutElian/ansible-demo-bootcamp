@@ -49,13 +49,40 @@ jobs:
           chmod +x setup-backend.sh
           ./setup-backend.sh
 
-      - name: Make deploy script executable
-        run: chmod +x full-deploy.sh
+      - name: Terraform Init
+        run: terraform init
 
-      - name: Run full deployment
+      - name: Terraform Apply
         env:
           TF_VAR_build_number: ${{ inputs.build_number }}
-        run: ./full-deploy.sh
+        run: terraform apply -auto-approve
+
+      - name: Wait for instances to boot
+        run: sleep 30
+
+      - name: Generate Ansible inventory
+        run: terraform output -raw ansible_inventory > ansible/inventory.ini
+
+      - name: Test SSH connectivity
+        working-directory: ansible
+        run: |
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt of $max_attempts..."
+            if ansible web_servers -m ping -o; then
+              echo "✅ All instances reachable"
+              break
+            elif [ $attempt -lt $max_attempts ]; then
+              echo "⚠️  Retrying in 20s..."
+              sleep 20
+            fi
+            attempt=$((attempt + 1))
+          done
+
+      - name: Deploy React app with Ansible
+        working-directory: ansible
+        run: ansible-playbook deploy-react-app.yml
 
       - name: Save deployment outputs
         if: always()
