@@ -59,7 +59,7 @@ echo "This will create:"
 echo "  - 5 t3.small EC2 instances"
 echo "  - Security group (HTTP port 80)"
 echo "  - IAM roles and instance profiles"
-echo "  - SSH key pair (saved to ~/.ssh/ssm-key.pem)"
+echo "  - SSH key pair (saved to ~/.ssh/ansible-demo-key.pem)"
 echo ""
 
 terraform apply -auto-approve
@@ -69,10 +69,10 @@ echo "✓ Infrastructure deployed successfully"
 echo ""
 
 # Verify SSH key was created
-if [ -f ~/.ssh/ssm-key.pem ]; then
-    echo "✓ SSH key created at ~/.ssh/ssm-key.pem"
+if [ -f ~/.ssh/ansible-demo-key.pem ]; then
+    echo "✓ SSH key created at ~/.ssh/ansible-demo-key.pem"
 else
-    echo "⚠ Warning: SSH key not found at ~/.ssh/ssm-key.pem"
+    echo "⚠ Warning: SSH key not found at ~/.ssh/ansible-demo-key.pem"
     echo "This may cause connection issues with Ansible"
 fi
 echo ""
@@ -176,7 +176,7 @@ echo ""
 echo "Access your application at:"
 terraform output website_urls
 echo ""
-echo "SSH Private Key: ~/.ssh/ssm-key.pem"
+echo "SSH Private Key: ~/.ssh/ansible-demo-key.pem"
 echo ""
 echo "Useful commands:"
 echo "  - Check app status: cd ansible && ansible web_servers -m shell -a 'systemctl status nginx' --become"

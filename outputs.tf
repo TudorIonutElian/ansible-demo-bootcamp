@@ -25,7 +25,7 @@ output "security_group_id" {
 
 output "ssh_private_key_path" {
   description = "Path to SSH private key for Ansible"
-  value       = "~/.ssh/ssm-key.pem"
+  value       = "~/.ssh/ansible-demo-key.pem"
 }
 
 output "ssh_private_key" {
@@ -38,7 +38,7 @@ output "ansible_inventory" {
   description = "Ansible inventory in INI format"
   value = <<-EOT
 [web_servers]
-${join("\n", [for idx, ip in aws_instance.web_instances[*].public_ip : "${ip} ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ssm-key.pem"])}
+${join("\n", [for idx, ip in aws_instance.web_instances[*].public_ip : "${ip} ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ansible-demo-key.pem"])}
 
 [web_servers:vars]
 ansible_python_interpreter=/usr/bin/python3

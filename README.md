@@ -33,8 +33,8 @@ This project automates the complete deployment of a React application across mul
 
 ### Infrastructure (Terraform)
 - Provisions 5 t3.small EC2 instances (Amazon Linux 2023)
-- Creates security groups allowing HTTP (port 80) traffic
-- Sets up IAM roles for AWS Systems Manager access
+- Creates security groups allowing HTTP (port 80) and SSH (port 22) traffic
+- Sets up IAM roles for AWS and Ansible access
 - Generates SSH key pair for secure access
 - Configures networking and security
 
@@ -502,7 +502,7 @@ terraform apply
 - **Terraform** - Infrastructure as Code
 - **AWS EC2** - Virtual servers
 - **AWS IAM** - Access management
-- **AWS Systems Manager** - Fleet management
+- **AWS S3** - Terraform state storage
 
 ### Configuration Management
 - **Ansible** - Application deployment and configuration

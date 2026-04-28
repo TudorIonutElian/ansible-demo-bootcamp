@@ -1,11 +1,11 @@
 /**********************************************************
-  # Security group allowing HTTP inbound and all outbound
-  # Required for the sample website to be publicly accessible
+  # Security group allowing HTTP and SSH inbound and all outbound
+  # Required for the website to be publicly accessible and Ansible deployment
 **********************************************************/
 
 resource "aws_security_group" "ssm_web_sg" {
-  name        = "ssm-web-sg"
-  description = "Allow HTTP and SSH inbound traffic for SSM demo website"
+  name        = "ansible-web-sg"
+  description = "Allow HTTP and SSH inbound traffic for AWS Ansible demo website"
 
   ingress {
     description = "HTTP"
@@ -31,7 +31,7 @@ resource "aws_security_group" "ssm_web_sg" {
   }
 
   tags = {
-    Name        = "ssm-web-sg"
+    Name        = "ansible-web-sg"
     Environment = "Development-${var.build_number}"
   }
 

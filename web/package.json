@@ -1,5 +1,5 @@
 {
-  "name": "ssm-demo-web",
+  "name": "aws-ansible-demo-web",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

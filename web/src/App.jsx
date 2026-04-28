@@ -24,7 +24,7 @@ export default function App() {
       <div style={styles.orb3} />
       <div style={styles.orb4} />
       <div style={styles.content}>
-        <h1 style={styles.text}>Demo AWS Systems Manager</h1>
+        <h1 style={styles.text}>Demo AWS and ANSIBLE</h1>
         <div style={styles.clock}>
           {time.toLocaleTimeString()}
         </div>
