@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ec2_ssm_role" {
-  name = "EC2RoleWithSSMAccess"
+  name = "EC2RoleForAnsibleDemo"
 
   assume_role_policy = <<EOF
 {
@@ -44,6 +44,6 @@ resource "aws_iam_role_policy" "ec2_revoke_sg" {
 }
 
 resource "aws_iam_instance_profile" "ec2_ssm_profile" {
-  name = "ec2_ssm_profile"
+  name = "ec2-ansible-demo-profile"
   role = aws_iam_role.ec2_ssm_role.name
 }
