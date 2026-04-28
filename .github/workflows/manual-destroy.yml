@@ -7,11 +7,6 @@ on:
         description: 'Type "DESTROY" to confirm infrastructure destruction'
         required: true
         type: string
-      skip_ansible_cleanup:
-        description: 'Skip Ansible cleanup (only run Terraform destroy)'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   destroy:
@@ -34,16 +29,6 @@ jobs:
         with:
           terraform_version: latest
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install Ansible
-        if: ${{ !inputs.skip_ansible_cleanup }}
-        run: |
-          pip install ansible
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -63,15 +48,6 @@ jobs:
         run: |
           echo "📋 The following resources will be DESTROYED:"
           terraform plan -destroy
-
-      - name: Run Ansible cleanup (optional)
-        if: ${{ !inputs.skip_ansible_cleanup }}
-        continue-on-error: true
-        run: |
-          echo "🧹 Running Ansible cleanup tasks..."
-          cd ansible
-          # Add any pre-destroy cleanup tasks here if needed
-          # ansible-playbook cleanup.yml -i inventory/aws_ec2.yml
 
       - name: Terraform Destroy
         run: |

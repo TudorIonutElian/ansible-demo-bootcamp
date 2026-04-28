@@ -17,6 +17,7 @@ variable "architecture" {
 }
 
 variable "build_number" {
-  description = "The build number executed by Github CI/CD pipeline"
+  description = "The build number for deployment tagging"
   type        = string
+  default     = "local"
 }
