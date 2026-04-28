@@ -1,0 +1,99 @@
+name: Manual Infrastructure Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type "DESTROY" to confirm infrastructure destruction'
+        required: true
+        type: string
+      skip_ansible_cleanup:
+        description: 'Skip Ansible cleanup (only run Terraform destroy)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ inputs.confirmation }}" != "DESTROY" ]; then
+            echo "❌ ERROR: Confirmation failed. You must type 'DESTROY' to proceed."
+            exit 1
+          fi
+          echo "✅ Confirmation validated. Proceeding with infrastructure destruction..."
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Ansible
+        if: ${{ !inputs.skip_ansible_cleanup }}
+        run: |
+          pip install ansible
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Show what will be destroyed
+        run: |
+          cd terraform
+          echo "📋 The following resources will be DESTROYED:"
+          terraform plan -destroy
+
+      - name: Run Ansible cleanup (optional)
+        if: ${{ !inputs.skip_ansible_cleanup }}
+        continue-on-error: true
+        run: |
+          echo "🧹 Running Ansible cleanup tasks..."
+          cd ansible
+          # Add any pre-destroy cleanup tasks here if needed
+          # ansible-playbook cleanup.yml -i inventory/aws_ec2.yml
+
+      - name: Terraform Destroy
+        run: |
+          cd terraform
+          echo "🔥 Destroying infrastructure..."
+          terraform destroy -auto-approve
+
+      - name: Verify destruction
+        run: |
+          cd terraform
+          echo "✅ Destruction complete. Verifying..."
+          terraform show
+
+      - name: Save destruction log
+        if: always()
+        run: |
+          cd terraform
+          terraform show > destruction-log.txt || echo "No state remaining" > destruction-log.txt
+          echo "Destroyed at: $(date)" >> destruction-log.txt
+
+      - name: Upload destruction log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: destruction-log
+          path: terraform/destruction-log.txt
+          retention-days: 90
