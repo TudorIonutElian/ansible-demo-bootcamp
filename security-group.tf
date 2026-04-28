@@ -34,4 +34,8 @@ resource "aws_security_group" "ssm_web_sg" {
     Name        = "ssm-web-sg"
     Environment = "Development-${var.build_number}"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
